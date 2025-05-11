@@ -1,9 +1,10 @@
-streamlit
 gigachain==0.2.6 
 gigachain_community==0.2.6 
 gigachain-cli==0.0.25 
 langgraph==0.2.19 
 langchain-community==0.2.16
+langchain>=0.1.16
+langchain-core>=0.1.42
 python-dotenv==1.0.1
 faiss-cpu
 torch==2.2.2
