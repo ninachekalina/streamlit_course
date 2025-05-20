@@ -17,7 +17,7 @@ from langchain_community.chat_models.gigachat import GigaChat
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.runnables import Runnable
 from langchain_community.chat_models.gigachat import GigaChat
-from langchain.agents.agent_toolkits import Tool
+from langchain_core.tools import Tool
 
 chat_history_m = []
 
