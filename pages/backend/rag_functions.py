@@ -117,7 +117,6 @@ def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperatur
     chain: RunnableSequence = prompt | llm | StrOutputParser()
     #agent = create_react_agent(llm, tools, prompt=AGENT_PROMPT)
     #agent = create_gigachat_functions_agent(llm, tools)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     #agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     agent_executor = AgentExecutor(agent=chain, tools=tools, verbose=True)
     return agent_executor, llm, retriever
