@@ -14,11 +14,13 @@ from langchain_core.tools import tool
 from langchain.tools.retriever import create_retriever_tool
 from langchain_community.chat_models.gigachat import GigaChat
 #from langchain.agents import create_gigachat_functions_agent, AgentExecutor
-from langchain.agents import AgentExecutor, create_react_agent
+#from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.runnables import Runnable
 from langchain_community.chat_models.gigachat import GigaChat
-from langchain.agents.agent_toolkits.react.base import AGENT_PROMPT
 from langchain_core.tools import Tool
+from langchain_core.output_parsers import StrOutputParser
+from langchain.agents import AgentExecutor
+
 
 chat_history_m = []
 
@@ -109,10 +111,12 @@ def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperatur
 
     tools = [retriever_tool, memory_clearing]
     retriever = db.as_retriever(search_kwargs={"k": 5})
-    agent = create_react_agent(llm, tools, prompt=AGENT_PROMPT)
+    chain: Runnable = prompt | llm | StrOutputParser()
+    #agent = create_react_agent(llm, tools, prompt=AGENT_PROMPT)
     #agent = create_gigachat_functions_agent(llm, tools)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     #agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+    agent_executor = AgentExecutor(agent=chain, tools=tools, verbose=True)
     return agent_executor, llm, retriever
 
 # ======== Ответ от агента ========
