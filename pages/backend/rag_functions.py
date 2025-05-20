@@ -13,7 +13,7 @@ from langchain.chains import create_retrieval_chain, LLMChain
 from langchain_core.tools import tool
 from langchain.tools.retriever import create_retriever_tool
 from langchain_community.chat_models.gigachat import GigaChat
-#from langchain.agents import create_gigachat_functions_agent, AgentExecutor
+from langchain.agents import create_gigachat_functions_agent, AgentExecutor
 #from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.runnables import Runnable
 from langchain_community.chat_models.gigachat import GigaChat
@@ -119,6 +119,7 @@ def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperatur
     #agent = create_gigachat_functions_agent(llm, tools)
     #agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     agent_executor = AgentExecutor(agent=chain, tools=tools, verbose=True)
+    agent = create_gigachat_functions_agent(llm, tools)
     return agent_executor, llm, retriever
 
 # ======== Ответ от агента ========
