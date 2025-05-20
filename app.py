@@ -1,7 +1,6 @@
 import streamlit as st
 import datetime
 import json
-
 from pages.backend import rag_functions
 from pages.backend.rag_functions import prepare_rag_llm, load_csv_as_context, generate_cql_query, generate_answer, \
     generate_sql_query, generate_quiz_from_retriever
@@ -12,7 +11,6 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 st.sidebar.subheader("⚙️ Настройки модели")
 temperature = st.sidebar.slider("Температура генерации (креативность)", min_value=0.0, max_value=1.5, value=0.7, step=0.1)
-
 
 if "conversation" not in st.session_state:
     token = st.text_input("🔑 Введите ключ GigaChat:", type="password")
@@ -25,7 +23,6 @@ if "conversation" not in st.session_state:
             temperature=temperature,
             max_length=2000,
         )
-
 st.subheader("💬 Задай вопрос по базе знаний")
 user_input = st.text_input("Вопрос")
 if st.button("Ответить") and user_input:
@@ -125,12 +122,12 @@ if "generated_quiz" in st.session_state and st.session_state.generated_quiz:
     st.text_area("📄 Тест (без ответов)", value=st.session_state.generated_quiz, height=400)
 
     # Кнопка показать ответы
-    if st.button("✅ Проверить ответы"):
-        st.session_state.show_answers = True
+    #if st.button("✅ Проверить ответы"):
+      #  st.session_state.show_answers = True
 
     # Показать ответы после нажатия
-    if st.session_state.get("show_answers", False):
-        st.text_area("🟢 Тест с ответами", value=st.session_state.generated_quiz_full, height=400)
+ #   if st.session_state.get("show_answers", False):
+    #    st.text_area("🟢 Тест с ответами", value=st.session_state.generated_quiz_full, height=400)
 
     # Кнопка сохранить
     st.download_button(
