@@ -17,6 +17,7 @@ from langchain_community.chat_models.gigachat import GigaChat
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.runnables import Runnable
 from langchain_community.chat_models.gigachat import GigaChat
+from langchain.agents.agent_toolkits.react.base import AGENT_PROMPT
 from langchain_core.tools import Tool
 
 chat_history_m = []
@@ -108,7 +109,7 @@ def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperatur
 
     tools = [retriever_tool, memory_clearing]
     retriever = db.as_retriever(search_kwargs={"k": 5})
-    agent = create_react_agent(llm, tools)
+    agent = create_react_agent(llm, tools, prompt=AGENT_PROMPT)
     #agent = create_gigachat_functions_agent(llm, tools)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     #agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
