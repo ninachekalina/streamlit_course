@@ -11,6 +11,7 @@ from langchain_community.document_loaders import TextLoader
 from langchain.prompts import PromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
+from langchain_core.tools.base import get_all_basemodel_annotations
 from langchain_core.tools import tool
 from langchain.tools.retriever import create_retriever_tool
 from langchain.agents import AgentExecutor
