@@ -4,7 +4,7 @@ import json
 from pages.backend import rag_functions
 #from pages.backend.rag_functions import prepare_rag_llm, load_csv_as_context, generate_cql_query, generate_answer, \
     #generate_sql_query, generate_quiz_from_retriever
-from pages/backend.rag_functions import prepare_rag_llm, load_csv_as_context, generate_cql_query, generate_answer, \
+from pages.backend.rag_functions import prepare_rag_llm, load_csv_as_context, generate_cql_query, generate_answer, \
     generate_sql_query, generate_quiz_from_retriever
 
 st.title("🎓 AI Ассистент + Генератор запросов")
