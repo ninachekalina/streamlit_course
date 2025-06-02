@@ -13,7 +13,7 @@ from langchain.chains import create_retrieval_chain, LLMChain
 from langchain_core.tools import tool
 from langchain.tools.retriever import create_retriever_tool
 from langchain_community.chat_models.gigachat import GigaChat
-from langchain.agents import create_gigachat_functions_agent, AgentExecutor
+from langchain.agents import AgentExecutor, create_gigachat_functions_agent
 #from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.runnables import Runnable
 from langchain_community.chat_models.gigachat import GigaChat
