@@ -10,7 +10,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain.prompts import PromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains import create_retrieval_chain, LLMChain
+from langchain.chains import create_retrieval_chain
 from langchain_core.tools import tool
 from langchain.tools.retriever import create_retriever_tool
 from langchain.agents import AgentExecutor
@@ -43,7 +43,7 @@ def generate_cql_query(llm, instruction: str, context: str) -> str:
 
 Ответ:
 """)
-    chain = LLMChain(llm=llm, prompt=prompt)
+    chain = retrieval_chain(llm=llm, prompt=prompt)
     return chain.run(context=context, instruction=instruction)
 
 def generate_sql_query(llm, instruction: str, context: str) -> str:
@@ -58,7 +58,7 @@ def generate_sql_query(llm, instruction: str, context: str) -> str:
 
 Ответ:
 """)
-    chain = LLMChain(llm=llm, prompt=prompt)
+    chain = retrieval_chain(llm=llm, prompt=prompt)
     return chain.run(context=context, instruction=instruction)
 
 
@@ -164,7 +164,7 @@ def generate_quiz_from_retriever(llm, retriever, query="Создай тест п
 """)
 
     # Генерируем результат
-    chain = LLMChain(llm=llm, prompt=test_prompt)
+    chain = retrieval_chain(llm=llm, prompt=test_prompt)
     result = chain.run(context=context)
 
     return result
@@ -181,7 +181,7 @@ def check_quiz_answers(llm, questions: List[Dict[str, str]], user_answers: List[
 Ты — объясняющий ассистент. Объясни, почему верный ответ "{correct}", а не "{wrong}" на вопрос: {question}.
 Варианты ответов: {options}
 ''')
-            chain = LLMChain(llm=llm, prompt=prompt)
+            chain = retrieval_chain(llm=llm, prompt=prompt)
             explanation = chain.run(question=q["question"], correct=q["answer"], wrong=user_ans, options=", ".join(q["options"]))
         results.append({
             "question": q["question"],
