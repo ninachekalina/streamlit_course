@@ -8,3 +8,4 @@ faiss-cpu
 torch==2.2.2
 transformers
 sentence-transformers
+pydantic==1.10.9 
