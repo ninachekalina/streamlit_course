@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from typing import List, Dict
 import json
+from langchain_gigachat.chat_models import GigaChat
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
@@ -12,16 +13,13 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain, LLMChain
 from langchain_core.tools import tool
 from langchain.tools.retriever import create_retriever_tool
-from langchain_community.chat_models.gigachat import GigaChat
-from langchain.agents import AgentExecutor, create_gigachat_functions_agent
-#from langchain.agents import AgentExecutor, create_react_agent
+from langchain.agents import AgentExecutor
 from langchain_core.runnables import Runnable
-from langchain_community.chat_models.gigachat import GigaChat
 from langchain_core.tools import Tool
 from langchain_core.output_parsers import StrOutputParser
 from langchain.agents import AgentExecutor
 from langchain_core.runnables import RunnableSequence
-
+from langgraph.prebuilt import create_react_agent
 
 
 chat_history_m = []
@@ -118,7 +116,7 @@ def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperatur
     #agent = create_react_agent(llm, tools, prompt=AGENT_PROMPT)
     #agent = create_gigachat_functions_agent(llm, tools)
     #agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    agent = create_gigachat_functions_agent(llm, tools)
+    agent = create_react_agent(llm, tools)
     agent_executor = AgentExecutor(agent=chain, tools=tools, verbose=True)
     
     return agent_executor, llm, retriever
