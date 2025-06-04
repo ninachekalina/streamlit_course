@@ -6,6 +6,7 @@ langchain-community
 langchain-openai
 python-dotenv==1.0.1
 langchain
+langchain-core
 faiss-cpu
 torch==2.5.0
 transformers
