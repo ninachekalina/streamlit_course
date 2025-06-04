@@ -8,7 +8,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_core.prompts import PromptTemplate
-from langchain.chains.combine_documents.stuff import create_stuff_documents_chain
+from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 #from langchain.chains import create_retrieval_chain
 from langchain.chains import  LLMChain
 from langchain_core.tools import tool
@@ -108,8 +108,8 @@ def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperatur
     embeddings = HuggingFaceEmbeddings(model_name=embeddings_name)
     db = FAISS.load_local(vector_store_path, embeddings, allow_dangerous_deserialization=True)
     retriever = db.as_retriever(search_kwargs={"k": 5})
-
-    document_chain = create_stuff_documents_chain(llm=llm, prompt=prompt)
+    document_chain = StuffDocumentsChain(llm=llm, prompt=prompt)
+    #document_chain = create_stuff_documents_chain(llm=llm, prompt=prompt)
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
 
     retriever_tool = create_retriever_tool(retriever, "search_web", "Searches and returns data from documents")
