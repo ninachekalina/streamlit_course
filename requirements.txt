@@ -8,7 +8,7 @@ python-dotenv==1.0.1
 langchain==0.3.25
 faiss-cpu
 torch==2.5.0
-transformers==4.41.0
-sentence-transformers==3.4.1
+transformers
+sentence-transformers
 streamlit
 pandas
