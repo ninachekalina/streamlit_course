@@ -8,9 +8,9 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_core.prompts import PromptTemplate
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains import create_retrieval_chain
-from langchain.chains import create_retrieval_chain, LLMChain
+from langchain.chains.combine_documents.stuff import create_stuff_documents_chain
+#from langchain.chains import create_retrieval_chain
+from langchain.chains import  LLMChain
 from langchain_core.tools import tool
 from langchain.tools.retriever import create_retriever_tool
 from langchain.chat_models.gigachat import GigaChat
