@@ -1,11 +1,11 @@
-gigachain==0.2.6
-gigachain_community==0.2.6
-gigachain-cli==0.0.25
+gigachain
+gigachain_community
+gigachain-cli
 
 langchain-community
 langchain-openai
 python-dotenv==1.0.1
-langchain==0.3.25
+langchain
 faiss-cpu
 torch==2.5.0
 transformers
