@@ -5,7 +5,7 @@ from typing import List, Dict
 import json
 from langchain_community.vectorstores.faiss import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.text_splitter import CharacterTextSplitter
+from langchain_text_splitters import CharacterTextSplitter
 from langchain.document_loaders import TextLoader
 from langchain.prompts import PromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
