@@ -7,7 +7,7 @@ from pages.backend.rag_functions import prepare_rag_llm, load_csv_as_context, ge
     generate_sql_query, generate_quiz_from_retriever
 st.title("🎓 AI Ассистент + Генератор запросов")
 
-if "chat_history" not in st.session_state:Add commentMore actions
+if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 st.sidebar.subheader("⚙️ Настройки модели")
 temperature = st.sidebar.slider("Температура генерации (креативность)", min_value=0.0, max_value=1.5, value=0.7, step=0.1)
