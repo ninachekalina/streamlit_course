@@ -120,7 +120,7 @@ def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperatur
     tools = [retriever_tool, memory_clearing]
     retriever = db.as_retriever(search_kwargs={"k": 5})
     agent = create_gigachat_functions_agent(llm, tools)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)Add commentMore actions
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     return agent_executor, llm, retriever
 
 # ======== Ответ от агента ========Add commentMore actions
@@ -133,7 +133,7 @@ def generate_answer(question):
     st.session_state.chat_history.append({"role": "assistant", "message": answer})
     return answer, None
 
-def generate_quiz_from_retriever(llm, retriever, query="Создай тест по теме больших данных"):Add commentMore actions
+def generate_quiz_from_retriever(llm, retriever, query="Создай тест по теме больших данных"):
     """
     Генерирует 6 тестовых вопросов по теме запроса на основе контекста из retriever и модели LLM.
 
