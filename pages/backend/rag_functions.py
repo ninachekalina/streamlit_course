@@ -1,6 +1,6 @@
 
-import streamlit as st
 import pandas as pd
+import os
 from typing import List, Dict
 import json
 from langchain.vectorstores import FAISS
@@ -14,10 +14,13 @@ from langchain.chains import create_retrieval_chain, LLMChain
 from langchain_core.tools import tool
 from langchain.tools.retriever import create_retriever_tool
 from langchain.chat_models.gigachat import GigaChat
-from langchain.agents import create_gigachat_functions_agent, AgentExecutor
+from langchain.agents import  AgentExecutor
+from langgraph.prebuilt import create_react_agent
+
 import streamlit as st
 
 chat_history_m = []
+
 
 # ======== CQL генерация ========
 def load_csv_as_context(csv_path: str, max_rows: int = 5) -> str:
@@ -25,6 +28,7 @@ def load_csv_as_context(csv_path: str, max_rows: int = 5) -> str:
     context = df.head(max_rows).to_string(index=False)
     columns_info = ', '.join(df.columns)
     return f"Таблица с колонками: {columns_info}\nПример данных:\n{context}"
+
 
 def generate_cql_query(llm, instruction: str, context: str) -> str:
     prompt = PromptTemplate.from_template("""
@@ -40,6 +44,7 @@ def generate_cql_query(llm, instruction: str, context: str) -> str:
 """)
     chain = LLMChain(llm=llm, prompt=prompt)
     return chain.run(context=context, instruction=instruction)
+
 
 def generate_sql_query(llm, instruction: str, context: str) -> str:
     prompt = PromptTemplate.from_template("""
@@ -107,31 +112,33 @@ def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperatur
     document_chain = create_stuff_documents_chain(llm=llm, prompt=prompt)
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
 
-    
     retriever_tool = create_retriever_tool(retriever, "search_web", "Searches and returns data from documents")
 
     @tool
     def memory_clearing() -> None:
         '''Очищает историю диалога.'''
-       
+
         global chat_history_m
         chat_history_m = []
 
     tools = [retriever_tool, memory_clearing]
+
     retriever = db.as_retriever(search_kwargs={"k": 5})
-    agent = create_gigachat_functions_agent(llm, tools)
+    agent = create_react_agent(llm, tools)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     return agent_executor, llm, retriever
+
 
 # ======== Ответ от агента ========Add commentMore actions
 def generate_answer(question):
     result = st.session_state.conversation.invoke({"input": question})
     answer = result.get("output", "")
-    #answer = st.session_state.conversation.invoke({"input": question})["output"]
+    # answer = st.session_state.conversation.invoke({"input": question})["output"]
     # Добавляем в историю
     st.session_state.chat_history.append({"role": "user", "message": question})
     st.session_state.chat_history.append({"role": "assistant", "message": answer})
     return answer, None
+
 
 def generate_quiz_from_retriever(llm, retriever, query="Создай тест по теме больших данных"):
     """
@@ -183,7 +190,8 @@ def check_quiz_answers(llm, questions: List[Dict[str, str]], user_answers: List[
 Варианты ответов: {options}
 ''')
             chain = LLMChain(llm=llm, prompt=prompt)
-            explanation = chain.run(question=q["question"], correct=q["answer"], wrong=user_ans, options=", ".join(q["options"]))
+            explanation = chain.run(question=q["question"], correct=q["answer"], wrong=user_ans,
+                                    options=", ".join(q["options"]))
         results.append({
             "question": q["question"],
             "your_answer": user_ans,
