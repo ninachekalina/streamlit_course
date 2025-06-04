@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from typing import List, Dict
 import json
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores.faiss import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.document_loaders import TextLoader
