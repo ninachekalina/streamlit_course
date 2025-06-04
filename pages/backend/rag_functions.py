@@ -1,26 +1,21 @@
-import os
+import osAdd commentMore actions
 import streamlit as st
 import pandas as pd
 from typing import List, Dict
 import json
-from langchain_gigachat.chat_models import GigaChat
-from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.document_loaders import TextLoader
+from langchain.document_loaders import TextLoader
 from langchain.prompts import PromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
+from langchain.chains import create_retrieval_chain, LLMChain
 from langchain_core.tools import tool
 from langchain.tools.retriever import create_retriever_tool
-from langchain.agents import AgentExecutor
-from langchain_core.runnables import Runnable
-from langchain_core.tools import Tool
-from langchain_core.output_parsers import StrOutputParser
-from langchain.agents import AgentExecutor
-from langchain_core.runnables import RunnableSequence
-from langgraph.prebuilt import create_react_agent
-
+from langchain.chat_models.gigachat import GigaChat
+from langchain.agents import create_gigachat_functions_agent, AgentExecutor
+import streamlit as st
 
 chat_history_m = []
 
@@ -43,7 +38,7 @@ def generate_cql_query(llm, instruction: str, context: str) -> str:
 
 Ответ:
 """)
-    chain = retrieval_chain(llm=llm, prompt=prompt)
+    chain = LLMChain(llm=llm, prompt=prompt)
     return chain.run(context=context, instruction=instruction)
 
 def generate_sql_query(llm, instruction: str, context: str) -> str:
@@ -58,7 +53,7 @@ def generate_sql_query(llm, instruction: str, context: str) -> str:
 
 Ответ:
 """)
-    chain = retrieval_chain(llm=llm, prompt=prompt)
+    chain = LLMChain(llm=llm, prompt=prompt)
     return chain.run(context=context, instruction=instruction)
 
 
@@ -66,18 +61,24 @@ def generate_sql_query(llm, instruction: str, context: str) -> str:
 def create_and_save_faiss_index(text_file_path: str, vector_store_path: str, model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
     if not os.path.exists(text_file_path):
         raise FileNotFoundError(f"Файл не найден: {text_file_path}")
+
     loader = TextLoader(text_file_path, encoding="utf-8")
     documents = loader.load()
+
     text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=100)
     docs = text_splitter.split_documents(documents)
+
     embedding_model = HuggingFaceEmbeddings(model_name=model_name)
     db = FAISS.from_documents(docs, embedding_model)
     db.save_local(vector_store_path)
+
     return db
+
 
 # ======== Подготовка RAG ========
 def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperature, max_length):
     os.environ["SB_AUTH_DATA"] = token
+
     llm = GigaChat(
         model=model,
         credentials=token,
@@ -88,41 +89,41 @@ def prepare_rag_llm(token, model, embeddings_name, vector_store_path, temperatur
         timeout=60,
         temperature=temperature
     )
+
     prompt = PromptTemplate.from_template(
         '''Ты — ассистент в образовании. Ответь на вопрос пользователя. \
 Используй при этом только информацию из контекста.
 Если в контексте нет информации для ответа, сообщи об этом пользователю.
 Контекст: {context}
 Вопрос: {input}
-Ответ: '''
+Ответ:'''
+
     )
+
     embeddings = HuggingFaceEmbeddings(model_name=embeddings_name)
     db = FAISS.load_local(vector_store_path, embeddings, allow_dangerous_deserialization=True)
     retriever = db.as_retriever(search_kwargs={"k": 5})
+
     document_chain = create_stuff_documents_chain(llm=llm, prompt=prompt)
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
+
+    
     retriever_tool = create_retriever_tool(retriever, "search_web", "Searches and returns data from documents")
 
     @tool
     def memory_clearing() -> None:
-        '''Очищает историю диалога'''
+        '''Очищает историю диалога.'''
+       
         global chat_history_m
         chat_history_m = []
 
     tools = [retriever_tool, memory_clearing]
     retriever = db.as_retriever(search_kwargs={"k": 5})
-    #chain: Runnable = prompt | llm | StrOutputParser()
-    chain: RunnableSequence = prompt | llm | StrOutputParser()
-    #agent = create_react_agent(llm, tools, prompt=AGENT_PROMPT)
-    #agent = create_gigachat_functions_agent(llm, tools)
-    #agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    agent = create_react_agent(llm, tools)
-    giga_with_functions = llm.bind_functions(tools)
-    agent_executor = AgentExecutor(agent=giga_with_functions, tools=tools, verbose=True)
-    
+    agent = create_gigachat_functions_agent(llm, tools)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)Add commentMore actions
     return agent_executor, llm, retriever
 
-# ======== Ответ от агента ========
+# ======== Ответ от агента ========Add commentMore actions
 def generate_answer(question):
     result = st.session_state.conversation.invoke({"input": question})
     answer = result.get("output", "")
@@ -132,8 +133,7 @@ def generate_answer(question):
     st.session_state.chat_history.append({"role": "assistant", "message": answer})
     return answer, None
 
-
-def generate_quiz_from_retriever(llm, retriever, query="Создай тест по теме больших данных"):
+def generate_quiz_from_retriever(llm, retriever, query="Создай тест по теме больших данных"):Add commentMore actions
     """
     Генерирует 6 тестовых вопросов по теме запроса на основе контекста из retriever и модели LLM.
 
@@ -165,7 +165,7 @@ def generate_quiz_from_retriever(llm, retriever, query="Создай тест п
 """)
 
     # Генерируем результат
-    chain = retrieval_chain(llm=llm, prompt=test_prompt)
+    chain = LLMChain(llm=llm, prompt=test_prompt)
     result = chain.run(context=context)
 
     return result
@@ -182,7 +182,7 @@ def check_quiz_answers(llm, questions: List[Dict[str, str]], user_answers: List[
 Ты — объясняющий ассистент. Объясни, почему верный ответ "{correct}", а не "{wrong}" на вопрос: {question}.
 Варианты ответов: {options}
 ''')
-            chain = retrieval_chain(llm=llm, prompt=prompt)
+            chain = LLMChain(llm=llm, prompt=prompt)
             explanation = chain.run(question=q["question"], correct=q["answer"], wrong=user_ans, options=", ".join(q["options"]))
         results.append({
             "question": q["question"],
