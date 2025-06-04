@@ -11,7 +11,7 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 st.sidebar.subheader("⚙️ Настройки модели")
 temperature = st.sidebar.slider("Температура генерации (креативность)", min_value=0.0, max_value=1.5, value=0.7, step=0.1)
-if "conversation" not in st.session_state:Add commentMore actions
+if "conversation" not in st.session_state:
     token = st.text_input("🔑 Введите ключ GigaChat:", type="password")
     if token:
         st.session_state.conversation, st.session_state.llm,st.session_state.retriever = prepare_rag_llm(
@@ -22,7 +22,7 @@ if "conversation" not in st.session_state:Add commentMore actions
             temperature=temperature,
             max_length=2000,
         )
-st.subheader("💬 Задай вопрос по базе знаний")Add commentMore actions
+st.subheader("💬 Задай вопрос по базе знаний")
 user_input = st.text_input("Вопрос")
 if st.button("Ответить") and user_input:
     with st.spinner("Генерация ответа..."):
@@ -30,7 +30,7 @@ if st.button("Ответить") and user_input:
         st.write(answer)
         st.markdown("---")
         st.subheader("🕘 История диалога")
-for msg in st.session_state.chat_history:Add commentMore actions
+for msg in st.session_state.chat_history:
             if msg["role"] == "user":
                 st.markdown(f"**Вы:** {msg['message']}")
             else:
@@ -40,7 +40,7 @@ if st.button("🧹 Очистить историю"):
 st.subheader("💾 Сохранение истории")
 # Выбор формата сохраненияAdd commentMore actions
 save_format = st.selectbox("Выберите формат для сохранения истории", ["JSON", "TXT"])
-if st.button("💾 Сохранить историю"):Add commentMore actions
+if st.button("💾 Сохранить историю"):
     if "chat_history" not in st.session_state or not st.session_state.chat_history:
         st.warning("История чата пуста.")
     else:
@@ -67,7 +67,7 @@ col1, col2 = st.columns([1, 1])
 
 csv_path = st.text_input("Путь к CSV-файлу", "vector_store/tech_big/russian_demography.csv")
 instruction = st.text_area("Введите задание (например: 'Добавить строку о населении Москвы за 2020 год')")
-with col1:Add commentMore actions
+with col1:
     if st.button("Сгенерировать CQL"):
         try:
             context = load_csv_as_context(csv_path)
